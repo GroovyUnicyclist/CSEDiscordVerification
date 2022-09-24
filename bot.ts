@@ -151,7 +151,7 @@ const msg = {
 sgMail
     .send(msg)
     .then(() => {
-        console.log('Email sent');
+        console.log(`Email sent to ${email}`);
     })
     .catch((error) => {
         console.error(error);
@@ -176,7 +176,7 @@ async function handleModalSubmit(interaction: ModalSubmitInteraction) {
                 const code = String(Math.floor(Math.random() * 1000000)).padStart(6, '0');
                 codes.set(user, code);
                 emails.set(user, email);
-                console.log(code);
+                console.log(`Created code: ${code} for user ${user} with email ${email}`);
                 await sendVerificationEmail(email, code);
                 await interaction.reply({ content: 'Please check your email for your verification code. Then press the gray button above to enter your code.', ephemeral: true }).catch(console.error);
             } else {
@@ -194,10 +194,10 @@ async function handleModalSubmit(interaction: ModalSubmitInteraction) {
                     // Deletes user and their code from the map
                     codes.delete(user);
                     // Adds log of user verification to csv file
-                    fs.appendFile(process.env.LOG_FILE, `${user},${emails.get(user)},${new Date()}\n`, function (err) {
+                    fs.appendFile(process.env.LOG_FILE, `${user},${emails.get(user)},${new Date()},${interaction.user.username}#${interaction.user.discriminator}\n`, function (err) {
                         if (err) throw err;
-                        console.log('Updated Log');
                     });
+                    console.log(`User ${user} has been verified with email ${emails.get(user)}!`)
                     // Deletes user and their email from the map
                     emails.delete(user);
                     await interaction.reply({ content: 'Your account has successfully been verified! Enjoy the server!', ephemeral: true }).catch(console.error);
