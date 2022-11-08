@@ -182,7 +182,7 @@ async function handleModalSubmit(interaction: ModalSubmitInteraction) {
                 const rateLimitDate = emailRateLimiter.get(user)?.[1]
                 const rateLimitCount = emailRateLimiter.get(user)?.[0]
                 const currentDate = new Date();
-                if (rateLimitDate && rateLimitCount) {
+                if (rateLimitDate && rateLimitCount && rateLimitCount < 3) {
                     if (currentDate.getDate() - rateLimitDate.getDate() < 86400000) {
                         emailRateLimiter.set(user, [rateLimitCount + 1 ?? 1, currentDate]);
                     } else {
