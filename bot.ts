@@ -65,6 +65,7 @@ const reenterButton = [{
 // The map which contains the verification codes that corresond to the users who requested them
 let codes: Map<string, string> = new Map()
 let emails: Map<string, string> = new Map()
+let emailRateLimiter: Map<string, [number, Date]> = new Map()
 
 /**
  * Checks if the specified user has been verified
@@ -178,6 +179,19 @@ async function handleModalSubmit(interaction: ModalSubmitInteraction) {
                 emails.set(user, email);
                 console.log(`Created code: ${code} for user ${user} with email ${email}`);
                 await sendVerificationEmail(email, code);
+                const rateLimitDate = emailRateLimiter.get(user)?.[1]
+                const rateLimitCount = emailRateLimiter.get(user)?.[0]
+                const currentDate = new Date();
+                if (rateLimitDate && rateLimitCount) {
+                    if (currentDate.getDate() - rateLimitDate.getDate() < 86400000) {
+                        emailRateLimiter.set(user, [rateLimitCount + 1 ?? 1, currentDate]);
+                    } else {
+                        await interaction.reply({ content: 'Too many emails requested. try again tomorrow.', ephemeral: true }).catch(console.error);
+                        return;
+                    }
+                } else {
+                    emailRateLimiter.set(user, [1, currentDate]);
+                }
                 await interaction.reply({ content: 'Please check your email for your verification code. Then press the gray button above to enter your code.', ephemeral: true }).catch(console.error);
             } else {
                 await interaction.reply({ content: 'You did not provide a valid OSU email! Your email must have the format `name.#@osu.edu` or `name.#@buckeyemail.osu.edu`', ephemeral: true }).catch(console.error);
