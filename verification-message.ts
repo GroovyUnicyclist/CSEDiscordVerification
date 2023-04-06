@@ -54,7 +54,7 @@ if (client != null) {
     client.on('ready', async () => {
         // Gets the verification channel from the ID specified in the .env
         const channel = client.channels.cache.get(process.env.VERIFICATION_CHANNEL);
-        if (channel?.isText()) {
+        if (channel?.isTextBased()) {
             await channel.send({ embeds: embeds, components: components }).catch(console.error);
         } else {
             console.log('Error sending message');

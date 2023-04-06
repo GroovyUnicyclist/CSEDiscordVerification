@@ -20,7 +20,7 @@ const emailModal = {
         type: 1,
         components: [{
             type: 4,
-            custom_id: "email_field",
+            customId: "email_field",
             label: "Email",
             style: 1,
             min_length: 11,
@@ -38,7 +38,7 @@ const codeModal = {
         type: 1,
         components: [{
             type: 4,
-            custom_id: "code_field",
+            customId: "code_field",
             label: "Code",
             style: 1,
             min_length: 6,
